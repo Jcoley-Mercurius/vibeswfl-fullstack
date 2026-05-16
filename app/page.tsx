@@ -25,7 +25,7 @@ export default function Home() {
 
         <button
           type="button"
-          className="hidden md:block px-8 py-4 bg-orange-500 hover:bg-orange-600 active:scale-95 transition-all font-semibold rounded-3xl text-white shadow-xl shadow-orange-500/30"
+          className="hidden md:block px-8 py-4 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-95 transition-all font-semibold rounded-3xl text-white shadow-xl shadow-orange-500/30"
         >
           Get Started
         </button>
@@ -46,11 +46,17 @@ export default function Home() {
           <a href="#" className="py-6 text-2xl font-medium border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Events</a>
           <a href="#" className="py-6 text-2xl font-medium border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Deals</a>
           <a href="#" className="py-6 text-2xl font-medium border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Local AI</a>
-          <button type="button" onClick={() => setIsMenuOpen(false)} className="mt-8 w-full py-6 bg-orange-500 hover:bg-orange-600 rounded-3xl text-2xl font-semibold">Get Started</button>
+          <button 
+            type="button" 
+            onClick={() => setIsMenuOpen(false)} 
+            className="mt-8 w-full py-6 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 rounded-3xl text-2xl font-semibold"
+          >
+            Get Started
+          </button>
         </div>
       )}
 
-      {/* HERO SECTION (unchanged) */}
+      {/* HERO */}
       <main className="flex flex-col items-center justify-center min-h-[calc(100vh-88px)] px-6 text-center relative">
         <div className="absolute inset-0 bg-linear-to-br from-orange-500/5 via-transparent to-transparent pointer-events-none" />
 
@@ -92,7 +98,7 @@ export default function Home() {
         </div>
       </main>
 
-      {/* NEW: Featured Vibes Section */}
+      {/* FEATURED VIBES */}
       <section className="py-20 px-6 bg-zinc-900">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold tracking-tighter text-center mb-4">Find Your Vibe</h2>
@@ -101,46 +107,63 @@ export default function Home() {
           </p>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {/* Card 1 */}
-            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 transition-colors group">
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 hover:shadow-2xl transition-all group">
               <div className="text-5xl mb-6">🏖️</div>
               <h3 className="text-xl font-semibold mb-2">Beach Day</h3>
               <p className="text-zinc-400 text-sm">Sun, sand, and calm waves</p>
             </div>
-
-            {/* Card 2 */}
-            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 transition-colors group">
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 hover:shadow-2xl transition-all group">
               <div className="text-5xl mb-6">🌅</div>
               <h3 className="text-xl font-semibold mb-2">Sunset Cruise</h3>
               <p className="text-zinc-400 text-sm">Golden hour on the water</p>
             </div>
-
-            {/* Card 3 */}
-            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 transition-colors group">
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 hover:shadow-2xl transition-all group">
               <div className="text-5xl mb-6">🍤</div>
               <h3 className="text-xl font-semibold mb-2">Foodie Adventure</h3>
               <p className="text-zinc-400 text-sm">Best local eats &amp; hidden gems</p>
             </div>
-
-            {/* Card 4 */}
-            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 transition-colors group">
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 hover:shadow-2xl transition-all group">
               <div className="text-5xl mb-6">🛶</div>
               <h3 className="text-xl font-semibold mb-2">Nature Escape</h3>
               <p className="text-zinc-400 text-sm">Kayaking &amp; wildlife</p>
             </div>
-
-            {/* Card 5 */}
-            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 transition-colors group">
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 hover:shadow-2xl transition-all group">
               <div className="text-5xl mb-6">🎣</div>
               <h3 className="text-xl font-semibold mb-2">Fishing Trip</h3>
               <p className="text-zinc-400 text-sm">Reel in the big one</p>
             </div>
-
-            {/* Card 6 */}
-            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 transition-colors group">
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 hover:shadow-2xl transition-all group">
               <div className="text-5xl mb-6">🚤</div>
               <h3 className="text-xl font-semibold mb-2">Boat Day</h3>
               <p className="text-zinc-400 text-sm">Water sports &amp; island hopping</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS - Pure orange, no blue */}
+      <section className="py-20 px-6 bg-zinc-950">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-4xl font-bold tracking-tighter text-center mb-4">How It Works</h2>
+          <p className="text-zinc-400 text-center mb-16 max-w-md mx-auto">
+            Three simple steps to your perfect Southwest Florida day
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-10">
+            <div className="text-center group">
+              <div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 group-hover:shadow-2xl transition-all">1️⃣</div>
+              <h3 className="text-2xl font-semibold mb-3">Tell Us Your Vibe</h3>
+              <p className="text-zinc-400">Answer a few quick questions about what kind of day you want — beach, adventure, foodie, etc.</p>
+            </div>
+            <div className="text-center group">
+              <div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 group-hover:shadow-2xl transition-all">2️⃣</div>
+              <h3 className="text-2xl font-semibold mb-3">AI Builds It</h3>
+              <p className="text-zinc-400">Our AI instantly creates a personalized itinerary with local spots, timings, and hidden gems.</p>
+            </div>
+            <div className="text-center group">
+              <div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 group-hover:shadow-2xl transition-all">3️⃣</div>
+              <h3 className="text-2xl font-semibold mb-3">Go Enjoy</h3>
+              <p className="text-zinc-400">Get your plan instantly — save it, share it, or start your perfect day in Southwest Florida.</p>
             </div>
           </div>
         </div>
