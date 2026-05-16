@@ -169,7 +169,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TESTIMONIALS - Only Cape Coral & Fort Myers */}
+      {/* TESTIMONIALS */}
       <section className="py-20 px-6 bg-zinc-900">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-4xl font-bold tracking-tighter text-center mb-4">Real Vibes, Real People</h2>
@@ -204,6 +204,75 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* STRONG FINAL CTA */}
+      <section className="py-24 px-6 bg-gradient-to-br from-zinc-900 to-black text-center relative overflow-hidden">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-5xl md:text-6xl font-bold tracking-tighter leading-none mb-6">
+            Ready to Find<br />Your Perfect Vibe?
+          </h2>
+          <p className="text-2xl text-zinc-400 mb-10">
+            Tell us what kind of day you want.<br />
+            Our AI will build it instantly.
+          </p>
+
+          <button
+            type="button"
+            onClick={() => alert("🚀 Plan My Vibe coming in Phase 2!")}
+            className="group px-16 py-8 bg-white text-zinc-950 rounded-3xl text-3xl font-semibold hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center gap-5 mx-auto"
+          >
+            Plan My Vibe
+            <span className="text-5xl group-active:rotate-12 transition-transform">🌴</span>
+          </button>
+
+          <p className="text-zinc-500 mt-12 text-sm tracking-widest">
+            Instant • Free • Made for Cape Coral &amp; Fort Myers
+          </p>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-black py-16 px-6 border-t border-white/10">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-10">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-3xl">
+                🌴
+              </div>
+              <h1 className="text-3xl font-bold tracking-tighter">VibeSWFL</h1>
+            </div>
+            <p className="text-zinc-400 text-sm leading-relaxed">
+              Your AI concierge for Southwest Florida.<br />
+              Instant plans. Real local vibes.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4 text-orange-400">Quick Links</h4>
+            <div className="flex flex-col gap-3 text-sm text-zinc-400">
+              <a href="#" className="hover:text-orange-400 transition-colors">Plan My Vibe</a>
+              <a href="#" className="hover:text-orange-400 transition-colors">Events</a>
+              <a href="#" className="hover:text-orange-400 transition-colors">Deals</a>
+              <a href="#" className="hover:text-orange-400 transition-colors">Local AI</a>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4 text-orange-400">Company</h4>
+            <div className="flex flex-col gap-3 text-sm text-zinc-400">
+              <a href="#" className="hover:text-orange-400 transition-colors">About Us</a>
+              <a href="#" className="hover:text-orange-400 transition-colors">Contact</a>
+              <a href="#" className="hover:text-orange-400 transition-colors">Blog</a>
+            </div>
+          </div>
+
+          <div className="text-sm text-zinc-500">
+            <p className="mb-2">© 2026 VibeSWFL. All rights reserved.</p>
+            <p className="mb-6 text-orange-400">A product of Mercurius Solutions</p>
+            <p className="text-xs">Built with ❤️ in Cape Coral, Florida</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
