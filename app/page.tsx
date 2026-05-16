@@ -6,7 +6,7 @@ export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white overflow-hidden">
+    <div className="min-h-screen bg-zinc-950 text-white">
       {/* Navigation */}
       <nav className="flex items-center justify-between px-6 md:px-12 py-6 border-b border-white/10">
         <div className="flex items-center gap-3">
@@ -16,7 +16,6 @@ export default function Home() {
           <h1 className="text-3xl font-bold tracking-tighter">VibeSWFL</h1>
         </div>
 
-        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-10 text-sm font-medium">
           <a href="#" className="hover:text-orange-400 transition-colors">Plan My Vibe</a>
           <a href="#" className="hover:text-orange-400 transition-colors">Events</a>
@@ -31,7 +30,6 @@ export default function Home() {
           Get Started
         </button>
 
-        {/* Hamburger */}
         <button
           type="button"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -52,12 +50,10 @@ export default function Home() {
         </div>
       )}
 
-      {/* Hero Section */}
+      {/* HERO SECTION (unchanged) */}
       <main className="flex flex-col items-center justify-center min-h-[calc(100vh-88px)] px-6 text-center relative">
-        {/* Background accent + soft glow */}
         <div className="absolute inset-0 bg-linear-to-br from-orange-500/5 via-transparent to-transparent pointer-events-none" />
 
-        {/* Floating badge */}
         <div className="absolute top-12 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-medium px-6 py-3 rounded-3xl flex items-center gap-2 z-20 shadow-2xl">
           <span className="text-orange-400 text-lg">⚡</span>
           INSTANT AI • LOCAL VIBES
@@ -90,12 +86,65 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Scroll indicator */}
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-zinc-400 text-xs tracking-widest animate-bounce">
           <span>SCROLL FOR MORE VIBES</span>
           <span className="text-2xl">↓</span>
         </div>
       </main>
+
+      {/* NEW: Featured Vibes Section */}
+      <section className="py-20 px-6 bg-zinc-900">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold tracking-tighter text-center mb-4">Find Your Vibe</h2>
+          <p className="text-zinc-400 text-center max-w-md mx-auto mb-12">
+            Whether you want chill beach days or high-energy adventures — we’ve got the perfect experience waiting.
+          </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            {/* Card 1 */}
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 transition-colors group">
+              <div className="text-5xl mb-6">🏖️</div>
+              <h3 className="text-xl font-semibold mb-2">Beach Day</h3>
+              <p className="text-zinc-400 text-sm">Sun, sand, and calm waves</p>
+            </div>
+
+            {/* Card 2 */}
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 transition-colors group">
+              <div className="text-5xl mb-6">🌅</div>
+              <h3 className="text-xl font-semibold mb-2">Sunset Cruise</h3>
+              <p className="text-zinc-400 text-sm">Golden hour on the water</p>
+            </div>
+
+            {/* Card 3 */}
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 transition-colors group">
+              <div className="text-5xl mb-6">🍤</div>
+              <h3 className="text-xl font-semibold mb-2">Foodie Adventure</h3>
+              <p className="text-zinc-400 text-sm">Best local eats &amp; hidden gems</p>
+            </div>
+
+            {/* Card 4 */}
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 transition-colors group">
+              <div className="text-5xl mb-6">🛶</div>
+              <h3 className="text-xl font-semibold mb-2">Nature Escape</h3>
+              <p className="text-zinc-400 text-sm">Kayaking &amp; wildlife</p>
+            </div>
+
+            {/* Card 5 */}
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 transition-colors group">
+              <div className="text-5xl mb-6">🎣</div>
+              <h3 className="text-xl font-semibold mb-2">Fishing Trip</h3>
+              <p className="text-zinc-400 text-sm">Reel in the big one</p>
+            </div>
+
+            {/* Card 6 */}
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 transition-colors group">
+              <div className="text-5xl mb-6">🚤</div>
+              <h3 className="text-xl font-semibold mb-2">Boat Day</h3>
+              <p className="text-zinc-400 text-sm">Water sports &amp; island hopping</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
