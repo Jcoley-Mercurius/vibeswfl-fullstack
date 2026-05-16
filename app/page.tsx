@@ -41,37 +41,40 @@ export default function Home() {
     setVibeType('');
   };
 
+  // REAL AI FUNCTION - calls our new API route
   const generateItinerary = async () => {
+    if (!vibeType) return;
+    
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1800));
+    setItinerary(null);
 
-    const vibeNames: { [key: string]: string } = {
-      beach: "Beach Day Bliss",
-      adventure: "Adventure Escape",
-      foodie: "Foodie Adventure",
-      romantic: "Romantic Sunset",
-      family: "Family Fun Day",
-      relax: "Pure Relaxation"
-    };
+    try {
+      const response = await fetch('/api/generate-itinerary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vibeType, groupSize, timeOfDay }),
+      });
 
-    const title = vibeType ? vibeNames[vibeType] || "Your Perfect Day" : "Your Perfect Cape Coral Day";
+      if (!response.ok) throw new Error('Failed to generate');
 
-    const newItinerary: Itinerary = {
-      id: Date.now().toString(),
-      title,
-      date: "Saturday, May 23",
-      highlights: [
-        `Morning: ${vibeType === 'beach' ? 'Kayak through mangroves at Matlacha' : vibeType === 'adventure' ? 'Paddleboard tour in Cape Coral' : 'Coffee at a waterfront café'}`,
-        `Lunch: ${vibeType === 'foodie' ? 'Hidden waterfront gem in Fort Myers' : 'Fresh seafood at a local spot'}`,
-        `Afternoon: ${groupSize === '1' || groupSize === '2' ? 'Private sunset cruise' : 'Family-friendly beach activities'}`,
-        `Evening: ${timeOfDay === 'evening' ? 'Live music & bonfire on the beach' : 'Stargazing on the pier'}`
-      ],
-      note: `Personalized for ${groupSize} people • ${vibeType || 'relaxed'} vibe • ${timeOfDay} start • Cape Coral / Fort Myers area`,
-      savedAt: new Date().toISOString()
-    };
+      const data = await response.json();
+      
+      const newItinerary: Itinerary = {
+        id: Date.now().toString(),
+        title: data.title || "Your Perfect Cape Coral Day",
+        date: "Saturday, May 23",
+        highlights: data.highlights || [],
+        note: data.note || `Personalized for ${groupSize} people • ${vibeType} vibe • ${timeOfDay} start • Cape Coral / Fort Myers area`,
+        savedAt: new Date().toISOString()
+      };
 
-    setItinerary(newItinerary);
-    setIsLoading(false);
+      setItinerary(newItinerary);
+    } catch (error) {
+      console.error(error);
+      alert("Sorry, the AI is taking a quick break. Try again in a moment!");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const saveCurrentTrip = () => {
@@ -179,37 +182,31 @@ export default function Home() {
           <h2 className="text-4xl font-bold tracking-tighter text-center mb-4">How It Works</h2>
           <p className="text-zinc-400 text-center mb-16 max-w-md mx-auto">Three simple steps to your perfect Southwest Florida day</p>
           <div className="grid md:grid-cols-3 gap-10">
-            <div className="text-center group"><div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-all">1️⃣</div><h3 className="text-2xl font-semibold mb-3">Tell Us Your Vibe</h3><p className="text-zinc-400">Answer a few quick questions about what kind of day you want</p></div>
-            <div className="text-center group"><div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-all">2️⃣</div><h3 className="text-2xl font-semibold mb-3">AI Builds It</h3><p className="text-zinc-400">Our AI instantly creates a personalized itinerary with local spots</p></div>
-            <div className="text-center group"><div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-all">3️⃣</div><h3 className="text-2xl font-semibold mb-3">Go Enjoy</h3><p className="text-zinc-400">Get your plan instantly — save it or start your perfect day</p></div>
+            <div className="text-center group"><div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-all">1️⃣</div><h3 className="text-2xl font-semibold mb-3">Tell Us Your Vibe</h3><p className="text-zinc-400">Answer a few quick questions</p></div>
+            <div className="text-center group"><div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-all">2️⃣</div><h3 className="text-2xl font-semibold mb-3">AI Builds It</h3><p className="text-zinc-400">Our AI instantly creates a personalized itinerary</p></div>
+            <div className="text-center group"><div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-all">3️⃣</div><h3 className="text-2xl font-semibold mb-3">Go Enjoy</h3><p className="text-zinc-400">Get your plan instantly</p></div>
           </div>
         </div>
       </section>
 
-      {/* TESTIMONIALS / REVIEWS */}
+      {/* TESTIMONIALS */}
       <section className="py-20 px-6 bg-zinc-900">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-4xl font-bold tracking-tighter text-center mb-4">Real Vibes, Real People</h2>
           <p className="text-zinc-400 text-center mb-16">Don’t just take our word for it</p>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="bg-zinc-800 rounded-3xl p-8">
-              <p className="text-lg italic text-zinc-300 mb-8">“VibeSWFL planned the perfect sunset cruise for my anniversary. It was spot-on — even found a hidden beach I didn’t know existed!”</p>
+              <p className="text-lg italic text-zinc-300 mb-8">“VibeSWFL planned the perfect sunset cruise for my anniversary. It was spot-on!”</p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-amber-400 rounded-2xl flex items-center justify-center text-xl">👩‍❤️‍👨</div>
-                <div>
-                  <p className="font-semibold">Sarah &amp; Mike Thompson</p>
-                  <p className="text-orange-400 text-sm">Cape Coral</p>
-                </div>
+                <div><p className="font-semibold">Sarah &amp; Mike Thompson</p><p className="text-orange-400 text-sm">Cape Coral</p></div>
               </div>
             </div>
             <div className="bg-zinc-800 rounded-3xl p-8">
-              <p className="text-lg italic text-zinc-300 mb-8">“Used it for a family day. The AI suggested the best fishing spots and a great lunch stop. Saved us so much time!”</p>
+              <p className="text-lg italic text-zinc-300 mb-8">“The AI suggested the best fishing spots and lunch. Saved us so much time!”</p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-amber-400 rounded-2xl flex items-center justify-center text-xl">👨‍👧‍👦</div>
-                <div>
-                  <p className="font-semibold">The Rodriguez Family</p>
-                  <p className="text-orange-400 text-sm">Fort Myers</p>
-                </div>
+                <div><p className="font-semibold">The Rodriguez Family</p><p className="text-orange-400 text-sm">Fort Myers</p></div>
               </div>
             </div>
           </div>
@@ -217,26 +214,13 @@ export default function Home() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-24 px-6 bg-linear-to-br from-zinc-900 to-black text-center relative overflow-hidden">
+      <section className="py-24 px-6 bg-linear-to-br from-zinc-900 to-black text-center">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-5xl md:text-6xl font-bold tracking-tighter leading-none mb-6">
-            Ready to Find<br />Your Perfect Vibe?
-          </h2>
-          <p className="text-2xl text-zinc-400 mb-10">
-            Tell us what kind of day you want.<br />
-            Our AI will build it instantly.
-          </p>
-          <button
-            type="button"
-            onClick={handlePlanMyVibe}
-            className="group px-16 py-8 bg-white text-zinc-950 rounded-3xl text-3xl font-semibold hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center gap-5 mx-auto"
-          >
-            Plan My Vibe
-            <span className="text-5xl group-active:rotate-12 transition-transform">🌴</span>
+          <h2 className="text-5xl md:text-6xl font-bold tracking-tighter leading-none mb-6">Ready to Find Your Perfect Vibe?</h2>
+          <p className="text-2xl text-zinc-400 mb-10">Tell us what kind of day you want.<br />Our AI will build it instantly.</p>
+          <button onClick={handlePlanMyVibe} className="group px-16 py-8 bg-white text-zinc-950 rounded-3xl text-3xl font-semibold hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center gap-5 mx-auto">
+            Plan My Vibe <span className="text-5xl group-active:rotate-12 transition-transform">🌴</span>
           </button>
-          <p className="text-zinc-500 mt-12 text-sm tracking-widest">
-            Instant • Free • Made for Cape Coral &amp; Fort Myers
-          </p>
         </div>
       </section>
 
@@ -248,30 +232,12 @@ export default function Home() {
               <div className="w-10 h-10 bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-3xl">🌴</div>
               <h1 className="text-3xl font-bold tracking-tighter">VibeSWFL</h1>
             </div>
-            <p className="text-zinc-400 text-sm leading-relaxed">
-              Your AI concierge for Southwest Florida.<br />
-              Instant plans. Real local vibes.
-            </p>
+            <p className="text-zinc-400 text-sm">Your AI concierge for Southwest Florida.<br />Instant plans. Real local vibes.</p>
           </div>
-          <div>
-            <h4 className="font-semibold mb-4 text-orange-400">Quick Links</h4>
-            <div className="flex flex-col gap-3 text-sm text-zinc-400">
-              <a href="#" className="hover:text-orange-400 transition-colors">Plan My Vibe</a>
-              <a href="#" className="hover:text-orange-400 transition-colors">Events</a>
-              <a href="#" className="hover:text-orange-400 transition-colors">Deals</a>
-              <a href="#" className="hover:text-orange-400 transition-colors">Local AI</a>
-            </div>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-4 text-orange-400">Company</h4>
-            <div className="flex flex-col gap-3 text-sm text-zinc-400">
-              <a href="#" className="hover:text-orange-400 transition-colors">About Us</a>
-              <a href="#" className="hover:text-orange-400 transition-colors">Contact</a>
-              <a href="#" className="hover:text-orange-400 transition-colors">Blog</a>
-            </div>
-          </div>
+          <div><h4 className="font-semibold mb-4 text-orange-400">Quick Links</h4><div className="flex flex-col gap-3 text-sm text-zinc-400"><a href="#" className="hover:text-orange-400">Plan My Vibe</a><a href="#" className="hover:text-orange-400">Events</a><a href="#" className="hover:text-orange-400">Deals</a><a href="#" className="hover:text-orange-400">Local AI</a></div></div>
+          <div><h4 className="font-semibold mb-4 text-orange-400">Company</h4><div className="flex flex-col gap-3 text-sm text-zinc-400"><a href="#" className="hover:text-orange-400">About Us</a><a href="#" className="hover:text-orange-400">Contact</a></div></div>
           <div className="text-sm text-zinc-500">
-            <p className="mb-2">© 2026 VibeSWFL. All rights reserved.</p>
+            <p>© 2026 VibeSWFL</p>
             <p className="mb-6 text-orange-400">A product of Mercurius Solutions</p>
             <p className="text-xs">Built with ❤️ in Cape Coral, Florida</p>
           </div>
