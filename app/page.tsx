@@ -2,8 +2,52 @@
 
 import { useState } from 'react';
 
+interface Itinerary {
+  title: string;
+  date: string;
+  highlights: string[];
+  note: string;
+}
+
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [itinerary, setItinerary] = useState<Itinerary | null>(null);
+
+  const [vibeType, setVibeType] = useState('');
+  const [groupSize, setGroupSize] = useState('2');
+  const [timeOfDay, setTimeOfDay] = useState('morning');
+
+  const handlePlanMyVibe = () => {
+    setIsModalOpen(true);
+    setItinerary(null);
+    setVibeType('');
+  };
+
+  const generateItinerary = () => {
+    const vibeNames: { [key: string]: string } = {
+      beach: "Beach Day Bliss",
+      adventure: "Adventure Escape",
+      foodie: "Foodie Adventure",
+      romantic: "Romantic Sunset",
+      family: "Family Fun Day",
+      relax: "Pure Relaxation"
+    };
+
+    const title = vibeType ? vibeNames[vibeType] || "Your Perfect Day" : "Your Perfect Cape Coral Day";
+
+    setItinerary({
+      title,
+      date: "Saturday, May 23",
+      highlights: [
+        `Morning: ${vibeType === 'beach' ? 'Kayak through mangroves' : vibeType === 'adventure' ? 'Paddleboard tour' : 'Coffee at a waterfront café'}`,
+        `Lunch: ${vibeType === 'foodie' ? 'Hidden waterfront gem' : 'Fresh seafood at a local spot'}`,
+        `Afternoon: ${groupSize === '1' || groupSize === '2' ? 'Private sunset cruise' : 'Family-friendly beach activities'}`,
+        `Evening: ${timeOfDay === 'evening' ? 'Live music & bonfire' : 'Stargazing on the pier'}`
+      ],
+      note: `Personalized for ${groupSize} people • ${vibeType || 'relaxed'} vibe • ${timeOfDay} start`
+    });
+  };
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
@@ -59,7 +103,6 @@ export default function Home() {
       {/* HERO */}
       <main className="flex flex-col items-center justify-center min-h-[calc(100vh-88px)] px-6 text-center relative">
         <div className="absolute inset-0 bg-linear-to-br from-orange-500/5 via-transparent to-transparent pointer-events-none" />
-
         <div className="absolute top-12 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-medium px-6 py-3 rounded-3xl flex items-center gap-2 z-20 shadow-2xl">
           <span className="text-orange-400 text-lg">⚡</span>
           INSTANT AI • LOCAL VIBES
@@ -80,7 +123,7 @@ export default function Home() {
 
           <button
             type="button"
-            onClick={() => alert("🚀 Plan My Vibe coming in Phase 2!")}
+            onClick={handlePlanMyVibe}
             className="group px-14 py-7 bg-white text-zinc-950 rounded-3xl text-2xl font-semibold hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center gap-4 mx-auto"
           >
             Plan My Vibe
@@ -105,7 +148,6 @@ export default function Home() {
           <p className="text-zinc-400 text-center max-w-md mx-auto mb-12">
             Whether you want chill beach days or high-energy adventures — we’ve got the perfect experience waiting.
           </p>
-
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 transition-all group">
               <div className="text-5xl mb-6">🏖️</div>
@@ -148,7 +190,6 @@ export default function Home() {
           <p className="text-zinc-400 text-center mb-16 max-w-md mx-auto">
             Three simple steps to your perfect Southwest Florida day
           </p>
-
           <div className="grid md:grid-cols-3 gap-10">
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-all">1️⃣</div>
@@ -174,12 +215,9 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <h2 className="text-4xl font-bold tracking-tighter text-center mb-4">Real Vibes, Real People</h2>
           <p className="text-zinc-400 text-center mb-16">Don’t just take our word for it</p>
-
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="bg-zinc-800 rounded-3xl p-8">
-              <p className="text-lg italic text-zinc-300 mb-8">
-                “VibeSWFL planned the perfect sunset cruise for my anniversary. It was spot-on — even found a hidden beach I didn’t know existed!”
-              </p>
+              <p className="text-lg italic text-zinc-300 mb-8">“VibeSWFL planned the perfect sunset cruise for my anniversary. It was spot-on — even found a hidden beach I didn’t know existed!”</p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-amber-400 rounded-2xl flex items-center justify-center text-xl">👩‍❤️‍👨</div>
                 <div>
@@ -188,11 +226,8 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
             <div className="bg-zinc-800 rounded-3xl p-8">
-              <p className="text-lg italic text-zinc-300 mb-8">
-                “Used it for a family day. The AI suggested the best fishing spots and a great lunch stop. Saved us so much time!”
-              </p>
+              <p className="text-lg italic text-zinc-300 mb-8">“Used it for a family day. The AI suggested the best fishing spots and a great lunch stop. Saved us so much time!”</p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-amber-400 rounded-2xl flex items-center justify-center text-xl">👨‍👧‍👦</div>
                 <div>
@@ -205,8 +240,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* STRONG FINAL CTA */}
-      <section className="py-24 px-6 bg-gradient-to-br from-zinc-900 to-black text-center relative overflow-hidden">
+      {/* FINAL CTA */}
+      <section className="py-24 px-6 bg-linear-to-br from-zinc-900 to-black text-center relative overflow-hidden">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-5xl md:text-6xl font-bold tracking-tighter leading-none mb-6">
             Ready to Find<br />Your Perfect Vibe?
@@ -215,16 +250,14 @@ export default function Home() {
             Tell us what kind of day you want.<br />
             Our AI will build it instantly.
           </p>
-
           <button
             type="button"
-            onClick={() => alert("🚀 Plan My Vibe coming in Phase 2!")}
+            onClick={handlePlanMyVibe}
             className="group px-16 py-8 bg-white text-zinc-950 rounded-3xl text-3xl font-semibold hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center gap-5 mx-auto"
           >
             Plan My Vibe
             <span className="text-5xl group-active:rotate-12 transition-transform">🌴</span>
           </button>
-
           <p className="text-zinc-500 mt-12 text-sm tracking-widest">
             Instant • Free • Made for Cape Coral &amp; Fort Myers
           </p>
@@ -246,7 +279,6 @@ export default function Home() {
               Instant plans. Real local vibes.
             </p>
           </div>
-
           <div>
             <h4 className="font-semibold mb-4 text-orange-400">Quick Links</h4>
             <div className="flex flex-col gap-3 text-sm text-zinc-400">
@@ -256,7 +288,6 @@ export default function Home() {
               <a href="#" className="hover:text-orange-400 transition-colors">Local AI</a>
             </div>
           </div>
-
           <div>
             <h4 className="font-semibold mb-4 text-orange-400">Company</h4>
             <div className="flex flex-col gap-3 text-sm text-zinc-400">
@@ -265,7 +296,6 @@ export default function Home() {
               <a href="#" className="hover:text-orange-400 transition-colors">Blog</a>
             </div>
           </div>
-
           <div className="text-sm text-zinc-500">
             <p className="mb-2">© 2026 VibeSWFL. All rights reserved.</p>
             <p className="mb-6 text-orange-400">A product of Mercurius Solutions</p>
@@ -273,6 +303,88 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* PLAN MY VIBE MODAL */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
+          <div className="bg-zinc-900 rounded-3xl max-w-lg w-full mx-4 p-8 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-3xl font-bold">Plan My Vibe</h2>
+              <button onClick={() => { setIsModalOpen(false); setItinerary(null); }} className="text-4xl leading-none text-zinc-400 hover:text-white">✕</button>
+            </div>
+
+            {!itinerary ? (
+              <div className="space-y-8">
+                <div>
+                  <p className="font-medium mb-3">What kind of vibe are you feeling?</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    {['beach', 'adventure', 'foodie', 'romantic', 'family', 'relax'].map((type) => (
+                      <button
+                        key={type}
+                        onClick={() => setVibeType(type)}
+                        className={`p-4 rounded-2xl text-sm font-medium transition-all ${vibeType === type ? 'bg-orange-500 text-white' : 'bg-zinc-800 hover:bg-zinc-700'}`}
+                      >
+                        {type === 'beach' && '🏖️ Beach'}
+                        {type === 'adventure' && '🛶 Adventure'}
+                        {type === 'foodie' && '🍤 Foodie'}
+                        {type === 'romantic' && '🌅 Romantic'}
+                        {type === 'family' && '👨‍👧‍👦 Family'}
+                        {type === 'relax' && '🌴 Relax'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="font-medium mb-2">How many people?</p>
+                  <input type="range" min="1" max="10" value={groupSize} onChange={(e) => setGroupSize(e.target.value)} className="w-full accent-orange-500" />
+                  <p className="text-center text-sm text-zinc-400 mt-1">{groupSize} people</p>
+                </div>
+
+                <div>
+                  <p className="font-medium mb-3">Preferred start time?</p>
+                  <div className="flex gap-3">
+                    <button onClick={() => setTimeOfDay('morning')} className={`flex-1 py-4 rounded-2xl ${timeOfDay === 'morning' ? 'bg-orange-500' : 'bg-zinc-800'}`}>Morning</button>
+                    <button onClick={() => setTimeOfDay('afternoon')} className={`flex-1 py-4 rounded-2xl ${timeOfDay === 'afternoon' ? 'bg-orange-500' : 'bg-zinc-800'}`}>Afternoon</button>
+                    <button onClick={() => setTimeOfDay('evening')} className={`flex-1 py-4 rounded-2xl ${timeOfDay === 'evening' ? 'bg-orange-500' : 'bg-zinc-800'}`}>Evening</button>
+                  </div>
+                </div>
+
+                <button
+                  onClick={generateItinerary}
+                  className="w-full py-6 bg-white text-zinc-950 rounded-3xl text-xl font-semibold hover:scale-105 transition-all"
+                  disabled={!vibeType}
+                >
+                  Generate My Perfect Day 🌴
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <h3 className="text-3xl font-semibold">{itinerary.title}</h3>
+                <p className="text-orange-400">{itinerary.date}</p>
+                <div className="space-y-4">
+                  {itinerary.highlights.map((item, i) => (
+                    <div key={i} className="bg-zinc-800 rounded-2xl p-4 flex gap-4 items-start">
+                      <span className="text-3xl">🌴</span>
+                      <div>
+                        <p className="font-medium">{item}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="bg-orange-500/10 border border-orange-500/30 rounded-2xl p-4 text-sm">
+                  {itinerary.note}
+                </div>
+                <button onClick={() => setItinerary(null)} className="w-full py-4 bg-orange-500 hover:bg-orange-600 rounded-3xl font-semibold">Start Over</button>
+              </div>
+            )}
+
+            <button onClick={() => { setIsModalOpen(false); setItinerary(null); }} className="mt-6 text-zinc-400 hover:text-white text-sm w-full">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
