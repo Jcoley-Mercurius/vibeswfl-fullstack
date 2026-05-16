@@ -3,20 +3,37 @@
 import { useState } from 'react';
 
 interface Itinerary {
+  id: string;
   title: string;
   date: string;
   highlights: string[];
   note: string;
+  savedAt: string;
 }
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMyTripsOpen, setIsMyTripsOpen] = useState(false);
   const [itinerary, setItinerary] = useState<Itinerary | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [savedTrips, setSavedTrips] = useState<Itinerary[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('vibeTrips');
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
 
   const [vibeType, setVibeType] = useState('');
   const [groupSize, setGroupSize] = useState('2');
   const [timeOfDay, setTimeOfDay] = useState('morning');
+
+  const saveToLocalStorage = (trips: Itinerary[]) => {
+    localStorage.setItem('vibeTrips', JSON.stringify(trips));
+    setSavedTrips(trips);
+  };
 
   const handlePlanMyVibe = () => {
     setIsModalOpen(true);
@@ -24,7 +41,10 @@ export default function Home() {
     setVibeType('');
   };
 
-  const generateItinerary = () => {
+  const generateItinerary = async () => {
+    setIsLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 1800));
+
     const vibeNames: { [key: string]: string } = {
       beach: "Beach Day Bliss",
       adventure: "Adventure Escape",
@@ -36,67 +56,66 @@ export default function Home() {
 
     const title = vibeType ? vibeNames[vibeType] || "Your Perfect Day" : "Your Perfect Cape Coral Day";
 
-    setItinerary({
+    const newItinerary: Itinerary = {
+      id: Date.now().toString(),
       title,
       date: "Saturday, May 23",
       highlights: [
-        `Morning: ${vibeType === 'beach' ? 'Kayak through mangroves' : vibeType === 'adventure' ? 'Paddleboard tour' : 'Coffee at a waterfront café'}`,
-        `Lunch: ${vibeType === 'foodie' ? 'Hidden waterfront gem' : 'Fresh seafood at a local spot'}`,
+        `Morning: ${vibeType === 'beach' ? 'Kayak through mangroves at Matlacha' : vibeType === 'adventure' ? 'Paddleboard tour in Cape Coral' : 'Coffee at a waterfront café'}`,
+        `Lunch: ${vibeType === 'foodie' ? 'Hidden waterfront gem in Fort Myers' : 'Fresh seafood at a local spot'}`,
         `Afternoon: ${groupSize === '1' || groupSize === '2' ? 'Private sunset cruise' : 'Family-friendly beach activities'}`,
-        `Evening: ${timeOfDay === 'evening' ? 'Live music & bonfire' : 'Stargazing on the pier'}`
+        `Evening: ${timeOfDay === 'evening' ? 'Live music & bonfire on the beach' : 'Stargazing on the pier'}`
       ],
-      note: `Personalized for ${groupSize} people • ${vibeType || 'relaxed'} vibe • ${timeOfDay} start`
-    });
+      note: `Personalized for ${groupSize} people • ${vibeType || 'relaxed'} vibe • ${timeOfDay} start • Cape Coral / Fort Myers area`,
+      savedAt: new Date().toISOString()
+    };
+
+    setItinerary(newItinerary);
+    setIsLoading(false);
+  };
+
+  const saveCurrentTrip = () => {
+    if (!itinerary) return;
+    const updatedTrips = [...savedTrips, itinerary];
+    saveToLocalStorage(updatedTrips);
+    alert('✅ Saved to My Trips!');
+  };
+
+  const deleteTrip = (id: string) => {
+    const updated = savedTrips.filter(t => t.id !== id);
+    saveToLocalStorage(updated);
   };
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
-      {/* Navigation */}
+      {/* NAVIGATION */}
       <nav className="flex items-center justify-between px-6 md:px-12 py-6 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-orange-500/30">
-            🌴
-          </div>
+          <div className="w-10 h-10 bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-orange-500/30">🌴</div>
           <h1 className="text-3xl font-bold tracking-tighter">VibeSWFL</h1>
         </div>
 
         <div className="hidden md:flex items-center gap-10 text-sm font-medium">
-          <a href="#" className="hover:text-orange-400 transition-colors">Plan My Vibe</a>
+          <a href="#" className="hover:text-orange-400 transition-colors" onClick={handlePlanMyVibe}>Plan My Vibe</a>
           <a href="#" className="hover:text-orange-400 transition-colors">Events</a>
           <a href="#" className="hover:text-orange-400 transition-colors">Deals</a>
+          <a href="#" className="hover:text-orange-400 transition-colors" onClick={() => setIsMyTripsOpen(true)}>My Trips</a>
           <a href="#" className="hover:text-orange-400 transition-colors">Local AI</a>
         </div>
 
-        <button
-          type="button"
-          className="hidden md:block px-8 py-4 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-95 transition-all font-semibold rounded-3xl text-white shadow-xl shadow-orange-500/30"
-        >
-          Get Started
-        </button>
+        <button type="button" className="hidden md:block px-8 py-4 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-95 transition-all font-semibold rounded-3xl text-white shadow-xl shadow-orange-500/30">Get Started</button>
 
-        <button
-          type="button"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden text-4xl focus:outline-none"
-        >
-          {isMenuOpen ? '✕' : '☰'}
-        </button>
+        <button type="button" onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-4xl focus:outline-none">{isMenuOpen ? '✕' : '☰'}</button>
       </nav>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden fixed inset-0 bg-zinc-950 z-50 flex flex-col pt-20 px-6">
-          <a href="#" className="py-6 text-2xl font-medium border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Plan My Vibe</a>
+          <a href="#" className="py-6 text-2xl font-medium border-b border-white/10" onClick={() => { setIsMenuOpen(false); handlePlanMyVibe(); }}>Plan My Vibe</a>
           <a href="#" className="py-6 text-2xl font-medium border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Events</a>
           <a href="#" className="py-6 text-2xl font-medium border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Deals</a>
+          <a href="#" className="py-6 text-2xl font-medium border-b border-white/10" onClick={() => { setIsMenuOpen(false); setIsMyTripsOpen(true); }}>My Trips</a>
           <a href="#" className="py-6 text-2xl font-medium border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Local AI</a>
-          <button 
-            type="button" 
-            onClick={() => setIsMenuOpen(false)} 
-            className="mt-8 w-full py-6 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 rounded-3xl text-2xl font-semibold"
-          >
-            Get Started
-          </button>
         </div>
       )}
 
@@ -115,12 +134,10 @@ export default function Home() {
               Southwest Florida Vibes
             </span>
           </h1>
-
           <p className="text-xl md:text-2xl text-zinc-400 max-w-2xl mx-auto mb-12">
             Tell us what kind of day you want.<br />
             We&apos;ll build the perfect Southwest Florida experience — instantly.
           </p>
-
           <button
             type="button"
             onClick={handlePlanMyVibe}
@@ -129,7 +146,6 @@ export default function Home() {
             Plan My Vibe
             <span className="text-4xl group-active:rotate-12 transition-transform">🌴</span>
           </button>
-
           <p className="text-sm text-zinc-500 mt-16 tracking-widest">
             TRUSTED BY LOCALS &amp; VISITORS IN CAPE CORAL • FORT MYERS
           </p>
@@ -145,40 +161,14 @@ export default function Home() {
       <section className="py-20 px-6 bg-zinc-900">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold tracking-tighter text-center mb-4">Find Your Vibe</h2>
-          <p className="text-zinc-400 text-center max-w-md mx-auto mb-12">
-            Whether you want chill beach days or high-energy adventures — we’ve got the perfect experience waiting.
-          </p>
+          <p className="text-zinc-400 text-center max-w-md mx-auto mb-12">Whether you want chill beach days or high-energy adventures — we’ve got the perfect experience waiting.</p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 transition-all group">
-              <div className="text-5xl mb-6">🏖️</div>
-              <h3 className="text-xl font-semibold mb-2">Beach Day</h3>
-              <p className="text-zinc-400 text-sm">Sun, sand, and calm waves</p>
-            </div>
-            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 transition-all group">
-              <div className="text-5xl mb-6">🌅</div>
-              <h3 className="text-xl font-semibold mb-2">Sunset Cruise</h3>
-              <p className="text-zinc-400 text-sm">Golden hour on the water</p>
-            </div>
-            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 transition-all group">
-              <div className="text-5xl mb-6">🍤</div>
-              <h3 className="text-xl font-semibold mb-2">Foodie Adventure</h3>
-              <p className="text-zinc-400 text-sm">Best local eats &amp; hidden gems</p>
-            </div>
-            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 transition-all group">
-              <div className="text-5xl mb-6">🛶</div>
-              <h3 className="text-xl font-semibold mb-2">Nature Escape</h3>
-              <p className="text-zinc-400 text-sm">Kayaking &amp; wildlife</p>
-            </div>
-            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 transition-all group">
-              <div className="text-5xl mb-6">🎣</div>
-              <h3 className="text-xl font-semibold mb-2">Fishing Trip</h3>
-              <p className="text-zinc-400 text-sm">Reel in the big one</p>
-            </div>
-            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 transition-all group">
-              <div className="text-5xl mb-6">🚤</div>
-              <h3 className="text-xl font-semibold mb-2">Boat Day</h3>
-              <p className="text-zinc-400 text-sm">Water sports &amp; island hopping</p>
-            </div>
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 transition-all group"><div className="text-5xl mb-6">🏖️</div><h3 className="text-xl font-semibold mb-2">Beach Day</h3><p className="text-zinc-400 text-sm">Sun, sand, and calm waves</p></div>
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 transition-all group"><div className="text-5xl mb-6">🌅</div><h3 className="text-xl font-semibold mb-2">Sunset Cruise</h3><p className="text-zinc-400 text-sm">Golden hour on the water</p></div>
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 transition-all group"><div className="text-5xl mb-6">🍤</div><h3 className="text-xl font-semibold mb-2">Foodie Adventure</h3><p className="text-zinc-400 text-sm">Best local eats &amp; hidden gems</p></div>
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 transition-all group"><div className="text-5xl mb-6">🛶</div><h3 className="text-xl font-semibold mb-2">Nature Escape</h3><p className="text-zinc-400 text-sm">Kayaking &amp; wildlife</p></div>
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 transition-all group"><div className="text-5xl mb-6">🎣</div><h3 className="text-xl font-semibold mb-2">Fishing Trip</h3><p className="text-zinc-400 text-sm">Reel in the big one</p></div>
+            <div className="bg-zinc-800 rounded-3xl p-6 hover:bg-zinc-700 hover:scale-105 transition-all group"><div className="text-5xl mb-6">🚤</div><h3 className="text-xl font-semibold mb-2">Boat Day</h3><p className="text-zinc-400 text-sm">Water sports &amp; island hopping</p></div>
           </div>
         </div>
       </section>
@@ -187,30 +177,16 @@ export default function Home() {
       <section className="py-20 px-6 bg-zinc-950">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-4xl font-bold tracking-tighter text-center mb-4">How It Works</h2>
-          <p className="text-zinc-400 text-center mb-16 max-w-md mx-auto">
-            Three simple steps to your perfect Southwest Florida day
-          </p>
+          <p className="text-zinc-400 text-center mb-16 max-w-md mx-auto">Three simple steps to your perfect Southwest Florida day</p>
           <div className="grid md:grid-cols-3 gap-10">
-            <div className="text-center group">
-              <div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-all">1️⃣</div>
-              <h3 className="text-2xl font-semibold mb-3">Tell Us Your Vibe</h3>
-              <p className="text-zinc-400">Answer a few quick questions about what kind of day you want — beach, adventure, foodie, etc.</p>
-            </div>
-            <div className="text-center group">
-              <div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-all">2️⃣</div>
-              <h3 className="text-2xl font-semibold mb-3">AI Builds It</h3>
-              <p className="text-zinc-400">Our AI instantly creates a personalized itinerary with local spots, timings, and hidden gems.</p>
-            </div>
-            <div className="text-center group">
-              <div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-all">3️⃣</div>
-              <h3 className="text-2xl font-semibold mb-3">Go Enjoy</h3>
-              <p className="text-zinc-400">Get your plan instantly — save it, share it, or start your perfect day in Southwest Florida.</p>
-            </div>
+            <div className="text-center group"><div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-all">1️⃣</div><h3 className="text-2xl font-semibold mb-3">Tell Us Your Vibe</h3><p className="text-zinc-400">Answer a few quick questions about what kind of day you want</p></div>
+            <div className="text-center group"><div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-all">2️⃣</div><h3 className="text-2xl font-semibold mb-3">AI Builds It</h3><p className="text-zinc-400">Our AI instantly creates a personalized itinerary with local spots</p></div>
+            <div className="text-center group"><div className="w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-all">3️⃣</div><h3 className="text-2xl font-semibold mb-3">Go Enjoy</h3><p className="text-zinc-400">Get your plan instantly — save it or start your perfect day</p></div>
           </div>
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
+      {/* TESTIMONIALS / REVIEWS */}
       <section className="py-20 px-6 bg-zinc-900">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-4xl font-bold tracking-tighter text-center mb-4">Real Vibes, Real People</h2>
@@ -269,9 +245,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-10">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-3xl">
-                🌴
-              </div>
+              <div className="w-10 h-10 bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-3xl">🌴</div>
               <h1 className="text-3xl font-bold tracking-tighter">VibeSWFL</h1>
             </div>
             <p className="text-zinc-400 text-sm leading-relaxed">
@@ -306,7 +280,7 @@ export default function Home() {
 
       {/* PLAN MY VIBE MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-100">
           <div className="bg-zinc-900 rounded-3xl max-w-lg w-full mx-4 p-8 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-3xl font-bold">Plan My Vibe</h2>
@@ -318,18 +292,9 @@ export default function Home() {
                 <div>
                   <p className="font-medium mb-3">What kind of vibe are you feeling?</p>
                   <div className="grid grid-cols-3 gap-3">
-                    {['beach', 'adventure', 'foodie', 'romantic', 'family', 'relax'].map((type) => (
-                      <button
-                        key={type}
-                        onClick={() => setVibeType(type)}
-                        className={`p-4 rounded-2xl text-sm font-medium transition-all ${vibeType === type ? 'bg-orange-500 text-white' : 'bg-zinc-800 hover:bg-zinc-700'}`}
-                      >
-                        {type === 'beach' && '🏖️ Beach'}
-                        {type === 'adventure' && '🛶 Adventure'}
-                        {type === 'foodie' && '🍤 Foodie'}
-                        {type === 'romantic' && '🌅 Romantic'}
-                        {type === 'family' && '👨‍👧‍👦 Family'}
-                        {type === 'relax' && '🌴 Relax'}
+                    {['beach','adventure','foodie','romantic','family','relax'].map((type) => (
+                      <button key={type} onClick={() => setVibeType(type)} className={`p-4 rounded-2xl text-sm font-medium transition-all ${vibeType === type ? 'bg-orange-500 text-white' : 'bg-zinc-800 hover:bg-zinc-700'}`}>
+                        {type === 'beach' && '🏖️ Beach'}{type === 'adventure' && '🛶 Adventure'}{type === 'foodie' && '🍤 Foodie'}{type === 'romantic' && '🌅 Romantic'}{type === 'family' && '👨‍👧‍👦 Family'}{type === 'relax' && '🌴 Relax'}
                       </button>
                     ))}
                   </div>
@@ -350,12 +315,8 @@ export default function Home() {
                   </div>
                 </div>
 
-                <button
-                  onClick={generateItinerary}
-                  className="w-full py-6 bg-white text-zinc-950 rounded-3xl text-xl font-semibold hover:scale-105 transition-all"
-                  disabled={!vibeType}
-                >
-                  Generate My Perfect Day 🌴
+                <button onClick={generateItinerary} disabled={!vibeType || isLoading} className="w-full py-6 bg-white text-zinc-950 rounded-3xl text-xl font-semibold hover:scale-105 transition-all disabled:opacity-50">
+                  {isLoading ? 'AI is thinking...' : 'Generate My Perfect Day 🌴'}
                 </button>
               </div>
             ) : (
@@ -364,24 +325,63 @@ export default function Home() {
                 <p className="text-orange-400">{itinerary.date}</p>
                 <div className="space-y-4">
                   {itinerary.highlights.map((item, i) => (
-                    <div key={i} className="bg-zinc-800 rounded-2xl p-4 flex gap-4 items-start">
-                      <span className="text-3xl">🌴</span>
-                      <div>
-                        <p className="font-medium">{item}</p>
-                      </div>
+                    <div key={i} className="bg-zinc-800 rounded-3xl p-5 flex gap-5 items-start">
+                      <span className="text-4xl shrink-0">🌴</span>
+                      <div className="pt-1"><p className="font-medium text-lg">{item}</p></div>
                     </div>
                   ))}
                 </div>
-                <div className="bg-orange-500/10 border border-orange-500/30 rounded-2xl p-4 text-sm">
-                  {itinerary.note}
+
+                <div className="rounded-3xl overflow-hidden border border-orange-500/30">
+                  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d112000!2d-81.95!3d26.65!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88db1f3c5f5f5f5f%3A0x5f5f5f5f5f5f5f5f!2sCape%20Coral%2C%20FL!5e0!3m2!1sen!2sus!4v1740000000000" width="100%" height="260" style={{ border: 0 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
                 </div>
+
+                <div className="bg-orange-500/10 border border-orange-500/30 rounded-3xl p-6 text-sm flex justify-between items-center">
+                  <div>
+                    <p className="font-semibold">Estimated time: 8 hours</p>
+                    <p className="text-orange-400">Cost range: $80–$250 per person</p>
+                  </div>
+                  <button onClick={saveCurrentTrip} className="px-6 py-3 bg-white text-zinc-950 rounded-3xl text-sm font-semibold">Save to My Trips</button>
+                </div>
+
                 <button onClick={() => setItinerary(null)} className="w-full py-4 bg-orange-500 hover:bg-orange-600 rounded-3xl font-semibold">Start Over</button>
               </div>
             )}
 
-            <button onClick={() => { setIsModalOpen(false); setItinerary(null); }} className="mt-6 text-zinc-400 hover:text-white text-sm w-full">
-              Close
-            </button>
+            <button onClick={() => { setIsModalOpen(false); setItinerary(null); }} className="mt-6 text-zinc-400 hover:text-white text-sm w-full">Close</button>
+          </div>
+        </div>
+      )}
+
+      {/* MY TRIPS MODAL */}
+      {isMyTripsOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-100">
+          <div className="bg-zinc-900 rounded-3xl max-w-lg w-full mx-4 p-8 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-3xl font-bold">My Trips</h2>
+              <button onClick={() => setIsMyTripsOpen(false)} className="text-4xl leading-none text-zinc-400 hover:text-white">✕</button>
+            </div>
+
+            {savedTrips.length === 0 ? (
+              <p className="text-zinc-400 text-center py-12">No trips saved yet.<br />Generate one and click &quot;Save to My Trips&quot;!</p>
+            ) : (
+              <div className="space-y-4">
+                {savedTrips.map((trip) => (
+                  <div key={trip.id} className="bg-zinc-800 rounded-3xl p-6">
+                    <div className="flex justify-between">
+                      <div>
+                        <h3 className="font-semibold text-lg">{trip.title}</h3>
+                        <p className="text-orange-400 text-sm">{trip.date}</p>
+                      </div>
+                      <button onClick={() => deleteTrip(trip.id)} className="text-red-400 text-sm">Delete</button>
+                    </div>
+                    <p className="text-xs text-zinc-400 mt-4 line-clamp-2">{trip.note}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button onClick={() => setIsMyTripsOpen(false)} className="mt-8 w-full py-4 bg-zinc-800 hover:bg-zinc-700 rounded-3xl font-medium">Close</button>
           </div>
         </div>
       )}
